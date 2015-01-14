@@ -8,10 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ViewController : UIViewController<UITableViewDataSource,UITableViewDelegate,UITextFieldDelegate>
+@interface ViewController : UIViewController<UITableViewDataSource,UITableViewDelegate,UITextViewDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *chattable;
-@property (weak, nonatomic) IBOutlet UITextField *messageField;
+@property (weak, nonatomic) IBOutlet UITextView *messageField;
 @property (weak, nonatomic) IBOutlet UIView *msgInPutView;
 @property (weak, nonatomic) IBOutlet UIButton *sendChatBtn;
 

@@ -19,6 +19,7 @@
 }
 
 @property(nonatomic, weak) IBOutlet NSLayoutConstraint* bottomConstraint;
+@property(nonatomic, weak) IBOutlet NSLayoutConstraint* textViewHeightConstraint;
 
 @end
 
@@ -41,11 +42,23 @@
     self.chattable.backgroundColor =[UIColor clearColor];
     self.chattable.keyboardDismissMode = UIScrollViewKeyboardDismissModeInteractive;
     
-    UIView *paddingView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 5, 20)];
-    self.messageField.leftView = paddingView;
-    self.messageField.leftViewMode = UITextFieldViewModeAlways;
+//    UIView *paddingView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 5, 20)];
+//    self.messageField.leftView = paddingView;
+//    self.messageField.leftViewMode = UITextFieldViewModeAlways;
     
     // Do any additional setup after loading the view, typically from a nib.
+    
+    CGFloat cornerRadius = 10.0f;
+    
+    self.messageField.backgroundColor = [UIColor whiteColor];
+    self.messageField.layer.borderWidth = 0.5f;
+    self.messageField.layer.borderColor = [UIColor lightGrayColor].CGColor;
+    self.messageField.layer.cornerRadius = cornerRadius;
+    
+    self.messageField.scrollIndicatorInsets = UIEdgeInsetsMake(cornerRadius, 0.0f, cornerRadius, 0.0f);
+    
+    self.messageField.textContainerInset = UIEdgeInsetsMake(4.0f, 2.0f, 4.0f, 2.0f);
+    self.messageField.contentInset = UIEdgeInsetsMake(2.0f, 0.0f, 2.0f, 0.0f);
 }
 
 - (void)didReceiveMemoryWarning {
@@ -265,9 +278,16 @@
             [self adddMediaBubbledata:kTextByOther mediaPath:self.messageField.text mtime:[formatter stringFromDate:date] thumb:@"" downloadstatus:@"" sendingStatus:kSent msg_ID:[self genRandStringLength:7]];
             isfromMe=YES;
         }
-        self.messageField.text=@"";
+        self.messageField.text = @"";
+        [self.messageField layoutIfNeeded];
         [self.chattable reloadData];
-        [self scrollTableview];
+        CGSize descriptionSize = self.messageField.contentSize;
+        NSLog(@"height : %f", descriptionSize.height);
+        [self.textViewHeightConstraint setConstant:descriptionSize.height];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            [self scrollTableview];
+        });
     }
 }
 
@@ -432,5 +452,37 @@
 }
 #endif
 
+- (void)textViewDidBeginEditing:(UITextView *)textView {
+    
+    CGSize descriptionSize = textView.contentSize;
+    
+    NSLog(@"height : %f", descriptionSize.height);
+    
+    [self.textViewHeightConstraint setConstant:descriptionSize.height];
+    
+    [self.messageField setNeedsLayout];
+}
+
+- (void)textViewDidEndEditing:(UITextView *)textView {
+    
+    CGSize descriptionSize = textView.contentSize;
+    
+    NSLog(@"height : %f", descriptionSize.height);
+    
+    [self.textViewHeightConstraint setConstant:descriptionSize.height];
+    
+    [self.messageField setNeedsLayout];
+}
+
+- (void)textViewDidChange:(UITextView *)textView {
+    
+    CGSize descriptionSize = textView.contentSize;
+    
+    NSLog(@"height : %f", descriptionSize.height);
+    
+    [self.textViewHeightConstraint setConstant:descriptionSize.height];
+    
+    [self.messageField setNeedsLayout];
+}
 
 @end
