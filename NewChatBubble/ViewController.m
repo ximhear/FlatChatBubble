@@ -18,6 +18,8 @@
     BOOL isfromMe;
 }
 
+@property(nonatomic, weak) IBOutlet NSLayoutConstraint* bottomConstraint;
+
 @end
 
 @implementation ViewController
@@ -37,6 +39,7 @@
                                    action:@selector(dismissKeyboard)];
     [self.chattable addGestureRecognizer:tap];
     self.chattable.backgroundColor =[UIColor clearColor];
+    self.chattable.keyboardDismissMode = UIScrollViewKeyboardDismissModeInteractive;
     
     UIView *paddingView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 5, 20)];
     self.messageField.leftView = paddingView;
@@ -48,6 +51,18 @@
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    [self addKeyboardNotifications];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    
+    [self removeKeyboardNotifications];
 }
 
 #pragma mark tableview delegate
@@ -73,7 +88,7 @@
                                             options:NSStringDrawingUsesLineFragmentOrigin
                                          attributes:@{ NSFontAttributeName:[UIFont systemFontOfSize:14.0f] }
                                             context:nil].size;
-    return labelSize.height + 30 + TOP_MARGIN;
+    return labelSize.height + 30 + TOP_MARGIN < 80 ? 80 : labelSize.height + 30 + TOP_MARGIN;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -188,33 +203,28 @@
 
 -(void)textFieldDidBeginEditing:(UITextField *)textField
 {
-    if (sphBubbledata.count>2) {
-        [self performSelector:@selector(scrollTableview) withObject:nil afterDelay:0.0];
-    }
-    CGRect tableviewframe=self.chattable.frame;
-    tableviewframe.size.height-=210;
-    
-    [UIView animateWithDuration:0.25 animations:^{
-        self.msgInPutView.frame=CGRectMake(0,self.view.frame.size.height-265, self.view.frame.size.width, 50);
-        self.chattable.frame=tableviewframe;
-    }];
-    
-    
-    
+//    if (sphBubbledata.count>2) {
+//        [self performSelector:@selector(scrollTableview) withObject:nil afterDelay:0.0];
+//    }
+//    CGRect tableviewframe=self.chattable.frame;
+//    tableviewframe.size.height-=210;
+//    
+//    [UIView animateWithDuration:0.25 animations:^{
+//        self.msgInPutView.frame=CGRectMake(0,self.view.frame.size.height-265, self.view.frame.size.width, 50);
+//        self.chattable.frame=tableviewframe;
+//    }];
 }
 
 -(void)textFieldDidEndEditing:(UITextField *)textField
 {
-    CGRect tableviewframe=self.chattable.frame;
-    tableviewframe.size.height+=210;
-    [UIView animateWithDuration:0.25 animations:^{
-        self.msgInPutView.frame=CGRectMake(0,self.view.frame.size.height-50,  self.view.frame.size.width, 50);
-        self.chattable.frame=tableviewframe;  }];
-    if (sphBubbledata.count>2) {
-        [self performSelector:@selector(scrollTableview) withObject:nil afterDelay:0.25];
-    }
-    
-    
+//    CGRect tableviewframe=self.chattable.frame;
+//    tableviewframe.size.height+=210;
+//    [UIView animateWithDuration:0.25 animations:^{
+//        self.msgInPutView.frame=CGRectMake(0,self.view.frame.size.height-50,  self.view.frame.size.width, 50);
+//        self.chattable.frame=tableviewframe;  }];
+//    if (sphBubbledata.count>2) {
+//        [self performSelector:@selector(scrollTableview) withObject:nil afterDelay:0.25];
+//    }
 }
 
 
@@ -348,33 +358,79 @@
     
     //  mediaPath  : Your Message  or  Path of the Image
     
-    [self adddMediaBubbledata:kTextByme mediaPath:@"Hi, check this new control!" mtime:[formatter stringFromDate:date] thumb:@"" downloadstatus:@"" sendingStatus:kSent msg_ID:[self genRandStringLength:7]];
-    //[self performSelector:@selector(messageSent:) withObject:@"0" afterDelay:1];
+//    [self adddMediaBubbledata:kTextByme mediaPath:@"Hi, check this new control!" mtime:[formatter stringFromDate:date] thumb:@"" downloadstatus:@"" sendingStatus:kSent msg_ID:[self genRandStringLength:7]];
+//    //[self performSelector:@selector(messageSent:) withObject:@"0" afterDelay:1];
+//    
+//    [self adddMediaBubbledata:kTextByOther mediaPath:@"Hello! How are you?" mtime:[formatter stringFromDate:date] thumb:@"" downloadstatus:@"" sendingStatus:kSent msg_ID:[self genRandStringLength:7]];
+//    
+//    [self adddMediaBubbledata:kTextByme mediaPath:@"I'm doing Great!" mtime:[formatter stringFromDate:date] thumb:@"" downloadstatus:@"" sendingStatus:kSent msg_ID:[self genRandStringLength:7]];
+//    
+//    [self adddMediaBubbledata:kImagebyme mediaPath:@"ImageUrl" mtime:[formatter stringFromDate:date] thumb:@"" downloadstatus:@"" sendingStatus:kSent msg_ID:[self genRandStringLength:7]];
+//    
+//    [self adddMediaBubbledata:kImagebyOther mediaPath:@"Yeah its cool!" mtime:[formatter stringFromDate:date] thumb:@"" downloadstatus:@"" sendingStatus:kSent msg_ID:[self genRandStringLength:7]];
+//    
+//    [self adddMediaBubbledata:kTextByme mediaPath:@"Supports Image too.\nSupports Image too.\nSupports Image too.\ng한글도\nwkf나오나궁금하네, 가족의 비밀.. 하튼ㄴㄴㄴㄴㄴ" mtime:[formatter stringFromDate:date] thumb:@"" downloadstatus:@"" sendingStatus:kSent msg_ID:[self genRandStringLength:7]];
+//    
+//    [self adddMediaBubbledata:kTextByOther mediaPath:@"Yup. I like the tail part of it." mtime:[formatter stringFromDate:date] thumb:@"" downloadstatus:@"" sendingStatus:kSent msg_ID:[self genRandStringLength:7]];
+//    
+//    [self adddMediaBubbledata:kImagebyme mediaPath:@"ImageUrl" mtime:[formatter stringFromDate:date] thumb:@"" downloadstatus:@"" sendingStatus:kSending msg_ID:@"ABFCXYZ"];
+//    
+//    [self adddMediaBubbledata:kImagebyOther mediaPath:@"Hi, check this new control!" mtime:[formatter stringFromDate:date] thumb:@"" downloadstatus:@"" sendingStatus:kSent msg_ID:[self genRandStringLength:7]];
+//    [self adddMediaBubbledata:kTextByme mediaPath:@"lets meet some time for dinner! hope you will like it." mtime:[formatter stringFromDate:date] thumb:@"" downloadstatus:@"" sendingStatus:kSent msg_ID:[self genRandStringLength:7]];
     
-    [self adddMediaBubbledata:kTextByOther mediaPath:@"Hello! How are you?" mtime:[formatter stringFromDate:date] thumb:@"" downloadstatus:@"" sendingStatus:kSent msg_ID:[self genRandStringLength:7]];
-    
-    [self adddMediaBubbledata:kTextByme mediaPath:@"I'm doing Great!" mtime:[formatter stringFromDate:date] thumb:@"" downloadstatus:@"" sendingStatus:kSent msg_ID:[self genRandStringLength:7]];
-    
-    [self adddMediaBubbledata:kImagebyme mediaPath:@"ImageUrl" mtime:[formatter stringFromDate:date] thumb:@"" downloadstatus:@"" sendingStatus:kSent msg_ID:[self genRandStringLength:7]];
-    
-    [self adddMediaBubbledata:kImagebyOther mediaPath:@"Yeah its cool!" mtime:[formatter stringFromDate:date] thumb:@"" downloadstatus:@"" sendingStatus:kSent msg_ID:[self genRandStringLength:7]];
-    
-    [self adddMediaBubbledata:kTextByme mediaPath:@"Supports Image too.\nSupports Image too.\nSupports Image too.\ng한글도\nwkf나오나궁금하네, 가족의 비밀.. 하튼ㄴㄴㄴㄴㄴ" mtime:[formatter stringFromDate:date] thumb:@"" downloadstatus:@"" sendingStatus:kSent msg_ID:[self genRandStringLength:7]];
-    
-    [self adddMediaBubbledata:kTextByOther mediaPath:@"Yup. I like the tail part of it." mtime:[formatter stringFromDate:date] thumb:@"" downloadstatus:@"" sendingStatus:kSent msg_ID:[self genRandStringLength:7]];
-    
-    [self adddMediaBubbledata:kImagebyme mediaPath:@"ImageUrl" mtime:[formatter stringFromDate:date] thumb:@"" downloadstatus:@"" sendingStatus:kSending msg_ID:@"ABFCXYZ"];
-    
-    [self adddMediaBubbledata:kImagebyOther mediaPath:@"Hi, check this new control!" mtime:[formatter stringFromDate:date] thumb:@"" downloadstatus:@"" sendingStatus:kSent msg_ID:[self genRandStringLength:7]];
-    [self adddMediaBubbledata:kTextByme mediaPath:@"lets meet some time for dinner! hope you will like it." mtime:[formatter stringFromDate:date] thumb:@"" downloadstatus:@"" sendingStatus:kSent msg_ID:[self genRandStringLength:7]];
-    
-    
+
+    [self adddMediaBubbledata:kTextByme mediaPath:@"aaa" mtime:[formatter stringFromDate:date] thumb:@"" downloadstatus:@"" sendingStatus:kSent msg_ID:[self genRandStringLength:7]];
+    [self adddMediaBubbledata:kTextByOther mediaPath:@"aaa" mtime:[formatter stringFromDate:date] thumb:@"" downloadstatus:@"" sendingStatus:kSent msg_ID:[self genRandStringLength:7]];
+
     
     [self.chattable reloadData];
 }
 
 
+- (void)addKeyboardNotifications {
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShowNotification:) name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHideNotification:) name:UIKeyboardWillHideNotification object:nil];
+}
 
+- (void)removeKeyboardNotifications {
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
+}
+
+#if 1
+- (void)keyboardWillShowNotification:(NSNotification *)notification {
+    
+    CGRect keyboardBounds;
+    [notification.userInfo[UIKeyboardFrameEndUserInfoKey] getValue:&keyboardBounds];
+    keyboardBounds = [self.view convertRect:keyboardBounds toView:nil];
+    
+    NSNumber *curve = notification.userInfo[UIKeyboardAnimationCurveUserInfoKey];
+    NSNumber *duration = notification.userInfo[UIKeyboardAnimationDurationUserInfoKey];
+    [UIView animateKeyframesWithDuration:[duration doubleValue] delay:0 options:[curve intValue] animations:^{
+        self.bottomConstraint.constant = keyboardBounds.size.height;
+        [self.view layoutIfNeeded];
+    } completion:^(BOOL finished) {
+    }];
+}
+
+- (void)keyboardWillHideNotification:(NSNotification *)notification {
+    
+    CGRect keyboardBounds;
+    [notification.userInfo[UIKeyboardFrameEndUserInfoKey] getValue:&keyboardBounds];
+    keyboardBounds = [self.view convertRect:keyboardBounds toView:nil];
+    
+    NSNumber *curve = notification.userInfo[UIKeyboardAnimationCurveUserInfoKey];
+    NSNumber *duration = notification.userInfo[UIKeyboardAnimationDurationUserInfoKey];
+    
+    [UIView animateKeyframesWithDuration:[duration doubleValue] delay:0 options:[curve intValue] animations:^{
+        self.bottomConstraint.constant = 0;
+        [self.view layoutIfNeeded];
+    } completion:^(BOOL finished) {
+    }];
+}
+#endif
 
 
 @end
